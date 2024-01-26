@@ -1,1 +1,1 @@
-# Sigma-Rule
+https://www.linkedin.com/in/onur-atali/
