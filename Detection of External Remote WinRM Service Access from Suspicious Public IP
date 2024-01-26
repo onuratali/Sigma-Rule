@@ -1,0 +1,75 @@
+title: Detection of External Remote WinRM Service Access from Suspicious Public IP
+
+id: afa67e12-5916-11ee-8c99-0242ac120002
+
+status: stable
+
+description: Remote WMI connection using Windows Remote Management (WinRM) is performed via port 5985 when using HTTP and via port 5986 for HTTPS. This rule detects successful access to the WinRM application from an internet IP address. This can indicate that a public WinRM port is open to the internet.
+
+references:
+
+- https://lnkd.in/gQk2mZvg
+
+- https://lnkd.in/gynZQCbz
+
+- https://lnkd.in/gxfvy3GC
+
+author: Onur Atali
+
+tags:
+
+- attack.initial_access
+
+- attack.credential_access
+
+- attack.t1133
+
+- attack.t1078
+
+- attack.t1110
+
+logsource:
+
+ category: firewall
+
+detection:
+
+ selection:
+
+  dst_port|contains:
+
+  - 5985
+
+  - 5986
+
+ selection_allow1:
+
+  action:
+
+  - forward
+
+  - accept
+
+ filter:
+
+  SourceIp|startswith:
+
+  - 127.0.0.0/8
+
+  - 10.0.0.0/8
+
+  - 172.16.0.0/12
+
+  - 192.168.0.0/16
+
+ selection_allow2:
+
+  blocked: "false"
+
+ condition: selection and selection_allow1 and selection_allow2 and not filter
+
+falsepositives:
+
+- Unknown
+
+level: high

@@ -1,0 +1,26 @@
+title: Suspicious Excel Python Code Execution Activity Detection
+id: 8fb57620-434b-11ee-be56-0242ac120002
+status: stable
+description: This rule detects registry change in Excel for Python that modifies security alert settings
+references:
+- https://lnkd.in/dt7pp5r8
+author: Onur Atali
+tags:
+- attack.defense_evasion
+- attack.t1112
+logsource:
+ product: windows
+ category: registry_set
+ definition: key must be add to the sysmon configuration to works
+detection:
+ selection:
+  EventType: Setvalue
+  TargetObject|contains:
+  - \software\policies\microsoft\office\
+  - \excel\security
+  - PythonFunctionWarnings
+  Details: DWORD (0x00000001)
+ condition: selection
+falsepositives:
+- Unlikely
+level: high

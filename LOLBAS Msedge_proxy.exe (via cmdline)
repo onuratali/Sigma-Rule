@@ -1,0 +1,27 @@
+title: LOLBAS Msedge_proxy.exe (via cmdline)
+id: fded7774-4ceb-11ee-be56-0242ac120002
+status: stable
+description: This rule detect msedge_proxy behavior with internet download activity.
+author: Onur Atali
+references:
+- https://lolbas-project.github.io/lolbas/Binaries/msedge_proxy/
+tags:
+- attack.defense_evasion
+- attack.execution
+- attack.t1218
+logsource:
+ category: process_creation
+ product: windows
+detection:
+ selection:
+  Image|endswith:
+  - \msedge_proxy.exe
+  CommandLine|contains:
+  - http
+ condition: selection
+fields:
+- CommandLine
+- ParentCommandLine
+falsepositives:
+- Unlikely
+level: medium

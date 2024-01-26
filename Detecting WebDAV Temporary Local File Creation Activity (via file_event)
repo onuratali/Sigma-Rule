@@ -1,0 +1,30 @@
+title: Detecting WebDAV Temporary Local File Creation Activity (via file_event)
+id: 11c0032e-3df2-11ee-be56-0242ac120002
+status: stable
+description: If file extensions in the WebDAV directory do not conform to normal file types (for example, executable file extensions such as '.exe', '.dll', '.bat'), these files may be flagged as suspicious. This rule detects the creation of WebDAV temporary files with suspicious extensions.
+references:
+- https://www.trellix.com/en-us/about/newsroom/stories/research/beyond-file-search-a-novel-method.html
+author: Onur Atali
+tags:
+- attack.initial_access
+- attack.t1584
+- attack.t1566
+logsource:
+  product: windows
+  category: file_event
+detection:
+  selection:
+    TargetFilename|contains: AppData\Local\Temp\TfsStore\Tfs_DAV
+  selection1:
+    TargetFilename|endswith:
+    - .vbs
+    - .ps1
+    - .lnk
+    - .zip
+    - .ico
+    - .bat
+    - .js
+  condition: selection and selection1
+falsepositives:
+- Unknown
+level: medium

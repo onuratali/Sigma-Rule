@@ -1,0 +1,24 @@
+title: Windows Account Failed Authentication for Multiple Users
+id: 86511fa4-270c-11ee-be56-0242ac120002
+status: stable
+description:This rule detects 10 or more incorrect login attempts on the same machine in 1 minute in the Windows 4625 log, this activity may be a possible lateral movement.
+references:
+    - https://www.varonis.com/blog/investigate-ntlm-brute-force
+author: Onur Atali
+tags:
+    - attack.lateral_movement
+    - attack.t1021.002
+logsource:
+    product: windows
+    service: security
+    definition: The rule should be added to SIEM resources with 10 or more events on 1 machine in a 1-minute log. #example splunk | bucket span=2m _time | where unique_users > 10
+detection:
+    selection:
+        EventID:
+            - 4625
+        LogonType: 3
+        AuthenticationPackageName: 'NTLM'
+    condition: selection
+falsepositives:
+    - Vulnerability scanner tools or pentesting activity.
+level: high

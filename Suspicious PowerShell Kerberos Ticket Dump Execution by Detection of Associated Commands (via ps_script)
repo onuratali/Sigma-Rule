@@ -1,0 +1,30 @@
+title: Suspicious PowerShell Kerberos Ticket Dump Execution by Detection of Associated Commands (via ps_script)
+id: 3bcf48e6-5d0a-11ee-8c99-0242ac120002
+status: stable
+description: This rule detects PowerShell scripts that have the ability to dump Kerberos tickets from the LSA, which could signal an attacker's attempt to obtain credentials for side-action.
+references:
+- https://github.com/MzHmO/PowershellKerberos/blob/main/dumper.ps1
+author: Onur Atali
+tags:
+- attack.credential_access
+- attack.t1555.003
+logsource:
+  product: windows
+  category: ps_script
+  definition: Requirements Script Block Logging must be enabled
+detection:
+  selection1:
+    ScriptBlockText|contains|all:
+    - KerbRetrieveEncodedTicketMessage
+    - KerbQueryTicketCacheMessage
+    - KerbQueryTicketCacheExMessage
+    - KerbQueryTicketCacheEx2Message
+    - KerbRetrieveTicketMessage
+    - KerbDecryptDataMessage
+  selection2:
+    ScriptBlockText|contains:
+    - LsaCallAuthenticationPackage
+  condition: selection1 and selection2
+falsepositives:
+- Unknown
+level: medium

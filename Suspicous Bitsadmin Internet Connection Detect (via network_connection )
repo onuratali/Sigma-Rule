@@ -1,0 +1,67 @@
+title: Suspicous Bitsadmin Internet Connection Detect (via network_connection )
+id: 28241a92-40b3-11ee-be56-0242ac120002
+status: stable
+description: The rule detects Bitsadmin that communicates with public IP addresses.
+references:
+    - https://www.hackingarticles.in/windows-for-pentester-bitsadmin/
+    - https://lolbas-project.github.io/lolbas/Binaries/Bitsadmin/
+author: Onur Atali
+tags:
+    - attack.defense_evasion
+    - attack.t1218
+    - attack.execution
+    - attack.t1559.001
+logsource:
+    category: network_connection
+    product: windows
+detection:
+    selection:
+        Image|endswith: '\bitsadmin.exe'
+        Initiated: 'true'
+    filter_ip:
+        DestinationIp|startswith:
+            - '10.'
+            - '192.168.'
+            - '172.16.'
+            - '172.17.'
+            - '172.18.'
+            - '172.19.'
+            - '172.20.'
+            - '172.21.'
+            - '172.22.'
+            - '172.23.'
+            - '172.24.'
+            - '172.25.'
+            - '172.26.'
+            - '172.27.'
+            - '172.28.'
+            - '172.29.'
+            - '172.30.'
+            - '172.31.'
+            - '169.254.'  # link-local address
+            - '127.'  # loopback address
+            - '::1'  # IPv6 loopback variant
+            - '0:0:0:0:0:0:0:1'  # IPv6 loopback variant
+            - 'fe80:'  # link-local address
+            - 'fc'  # private address range fc00::/7
+            - 'fd'  # private address range fc00::/7
+            # Subnet: 20.184.0.0/13 Microsoft IPs
+            - '20.184.'
+            - '20.185.'
+            - '20.186.'
+            - '20.187.'
+            - '20.188.'
+            - '20.189.'
+            - '20.190.'
+            - '20.191.'
+            - '23.79.'
+            - '51.10.'
+            # Subnet: 51.103.210.0/23
+            - '51.103.'
+            - '51.104.'
+            - '51.105.'
+            - '52.239.'
+    condition: selection and not filter_ip
+falsepositives:
+    - Communication to other corporate systems that use IP addresses from public address spaces
+level: medium

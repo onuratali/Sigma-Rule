@@ -1,0 +1,24 @@
+title: Linux Brutespray Tool Usage Detection Execution by Use of Tools Command Arguments (via process_creation)
+id: a56f7fc2-40b9-11ee-be56-0242ac120002
+description: This rule detects brutespray tool commands. BruteSpray automatically brute-forces services with default credentials using Medusa.
+status: stable
+references:
+- https://www.kali.org/tools/brutespray/
+- https://github.com/x90skysn3k/brutespray
+author: Onur Atali
+tags:
+- attack.execution
+- attack.t1059.001
+logsource:
+  product: linux
+  category: process_creation
+detection:
+  selection:
+    CommandLine|contains|all:
+    - --file
+    - --threads
+    - --hosts
+  condition: selection
+falsepositives:
+- Unlikely
+level: medium

@@ -1,0 +1,33 @@
+title: Possible Execution by Wscript Process Outbound Connection (via network_connection)
+id: 6f44ec32-a2d7-11ed-a8fc-0242ac120002
+status: stable
+description: Detects suspicious outbound network connection attempt by wscript.exe process. Network connection logging isn't enabled by default.
+author: Onur Atali
+tags:
+- attack.t1127
+- attack.ta0005
+- attack.t1203
+references:
+- https://lolbas-project.github.io/lolbas/Binaries/Wscript/
+- https://asec.ahnlab.com/en/46865/
+logsource:
+  category: network_connection
+  product: windows
+detection:
+  selection:
+    Initiated: "true"
+    Image|endswith: \wscript.exe
+  filter:
+    IpAddress|startswith:
+    - 10
+    - 192.168.
+    - 127
+    - 169.254.
+    IpAddress: ::1
+  condition: selection and not filter
+falsepositives:
+- Legitimate administrative activity
+level: medium
+fields:
+- IpAddress
+- Image

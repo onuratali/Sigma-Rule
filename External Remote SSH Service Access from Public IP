@@ -1,0 +1,36 @@
+title: External Remote SSH Service Access from Public IP
+id: cdb8ae36-40aa-11ee-be56-0242ac120002
+status: stable
+description: This rule detects when successful access occurs from an internet IP address via SSH. This may indicate a public SSH port.
+references:
+- https://null-byte.wonderhowto.com/how-to/gain-ssh-access-servers-by-brute-forcing-credentials-0194263/
+- https://www.crowdsec.net/blog/detecting-successful-ssh-brute-force
+author: Onur Atali
+tags:
+- attack.initial_access
+- attack.credential_access
+- attack.t1133
+- attack.t1078
+- attack.t1110
+logsource:
+  category: firewall
+detection:
+  selection:
+    dst_port:
+    - 22
+  selection_allow1:
+    action:
+    - forward
+    - accept
+  filter:
+    SourceIp|startswith:
+    - 127.0.0.0/8
+    - 10.0.0.0/8
+    - 172.16.0.0/12
+    - 192.168.0.0/16
+  selection_allow2:
+    blocked: "false"
+  condition: selection and selection_allow1 and selection_allow2 and not filter
+falsepositives:
+- Unknown
+level: high

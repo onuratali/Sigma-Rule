@@ -1,0 +1,31 @@
+title: Suspicious Python Code Execution Activity Detection in Excel (via process_creation)
+id: f37c55b2-4318-11ee-be56-0242ac120002
+status: test
+description: This rule detects commands added to the Registry to run Python code in an Excel application via the command line.
+references:
+- https://support.microsoft.com/en-us/office/data-security-and-python-in-excel-33cc88a4-4a87-485e-9ff9-f35958278327
+author: Onur Atali
+tags:
+- attack.persistence
+- attack.command_and_control
+- attack.t1137
+- attack.t1008
+- attack.t1546
+logsource:
+category: process_creation
+product: windows
+detection:
+selection_cmdline:
+CommandLine|contains|all:
+    - reg
+    - add
+    - \software\policies\microsoft\office\
+    - \excel\security
+    - PythonFunctionWarnings
+    - 1
+    condition: selection_cmdline
+    falsepositives:
+- Unknown
+level: medium
+
+
