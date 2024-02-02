@@ -1,0 +1,31 @@
+title: Suspicious SOAPHound Tool Execution by Use of Tools Command Arguments (via cmdline)
+id: cc371890-2e3b-4a53-bb38-17c76a69240b
+status: stable
+description: SOAPHound A .NET tool designed to collect Active Directory information for extracting sensitive Active Directory data. This rule detects the use of the SOAPHound hack tool command line.
+author: Onur Atali
+references:
+- https://medium.com/falconforce/soaphound-tool-to-collect-active-directory-data-via-adws-165aca78288c
+- https://github.com/FalconForceTeam/SOAPHound
+- https://www.linkedin.com/posts/derekmelber_soaphoundtool-to-collect-active-directory-activity-7156674131420213248-XGQw/
+tags:
+- attack.discovery
+- attack.t1087
+- attack.t1059.003
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection1:
+    CommandLine|contains:
+    - buildcache
+    - bhdump
+    - certdump
+    - dnsdump
+  selection2:
+    CommandLine|contains:
+    -  -c 
+    -  -o 
+  condition: selection1 and selection2
+falsepositives:
+- Unknown
+level: high
