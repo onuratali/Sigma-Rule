@@ -1,0 +1,58 @@
+title: Suspicious WebDAV Drive Mapping via Net.exe
+id: 91d93bb3-21ce-4068-b7c5-93ff297f3f4e
+status: stable
+description: Detects suspicious WebDAV drive mapping operations using net.exe, which might indicate data exfiltration or malicious file access attempts
+references:
+- https://attack.mitre.org/techniques/T1105/
+- https://attack.mitre.org/techniques/T1547/
+author: Onur Atali
+tags:
+    - attack.t1105
+    - attack.t1547
+    - attack.defense_evasion
+    - attack.persistence
+logsource:
+    product: windows
+    service: security
+    definition: 'Requirements: Audit Process Creation and Detailed File Share events must be enabled'
+detection:
+    selection_process:
+        Image|endswith: 
+            - '\net.exe'
+            - '\net1.exe'
+        CommandLine|contains|all: 
+            - 'use'
+            - ':' # Drive letter specification
+    selection_webdav:
+        CommandLine|contains: 
+            - '\\'
+            - 'http'
+            - 'https'
+            - 'webdav'
+    selection_persistent:
+        CommandLine|contains: '/PERSISTENT'
+    # Network logon events for WebDAV
+    selection_logon:
+        EventID: 4624
+        LogonType: 3
+        ProcessName|endswith:
+            - '\net.exe'
+            - '\net1.exe'
+    condition: (selection_process and selection_webdav) or (selection_process and selection_persistent and selection_logon)
+falsepositives:
+    - Legitimate WebDAV drive mapping by administrators
+    - Authorized file sharing and collaboration tools using WebDAV
+    - Enterprise applications that legitimately use WebDAV for file access
+
+level: medium
+fields:
+    - CommandLine
+    - ParentCommandLine
+    - User
+    - ProcessName
+    - ComputerName
+    - SubjectUserName
+    - TargetUserName
+    - IpAddress
+Ingress Tool Transfer, Technique T1105 - Enterprise | MITRE ATT&CK®
+ 
